@@ -1,28 +1,25 @@
 import path from "path"
 import { Verifier } from "@pact-foundation/pact"
-import Fastify from "fastify"
-import notesRoutes from "@/src/routes/v1/notes"
+import { FastifyInstance } from "fastify"
+
+import { build } from "@/helper"
 
 describe("Pact Provider Verification", () => {
-	let fastify: ReturnType<typeof Fastify>
+	let app: FastifyInstance
+	const instance: () => FastifyInstance = build()
 
 	beforeAll(async () => {
-		fastify = Fastify()
-		notesRoutes(fastify)
-		await fastify.listen({ port: 3001 })
-	})
-
-	afterAll(async () => {
-		await fastify.close()
+		app = instance()
+		await app.listen({ port: 3001 })
 	})
 
 	it("validates the expectations of the consumer", async () => {
 		const opts = {
-			provider: "NotesProvider",
-			providerBaseUrl: "http://localhost:3001",
 			pactUrls: [
 				path.resolve(__dirname, "../pacts/consumer-notesprovider.json"),
 			],
+			provider: "NotesProvider",
+			providerBaseUrl: "http://localhost:3001",
 		}
 
 		await new Verifier(opts).verifyProvider()

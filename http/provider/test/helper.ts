@@ -13,6 +13,9 @@ export const build = (overrideOptions: Partial<FastifyServerOptions> = {}) => {
 			...overrideOptions,
 		})
 
+		// await fastify.register(autoLoad, {
+		// 	dir: path.join(__dirname, "../src/config"),
+		// })
 		await fastify.register(autoLoad, {
 			dir: path.join(__dirname, "../src/plugins"),
 		})
