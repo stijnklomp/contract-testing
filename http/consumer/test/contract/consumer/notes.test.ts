@@ -9,7 +9,8 @@ import { build } from "@/helper"
 
 const provider = new Pact({
 	consumer: "NotesConsumer",
-	dir: path.resolve(process.cwd(), "pacts"),
+	dir: path.resolve(process.cwd(), "../pacts"),
+	// dir: path.resolve(__dirname, "../pacts"),
 	log: path.resolve(process.cwd(), "logs", "pact.log"),
 	logLevel: "warn",
 	port: 1234,
@@ -30,6 +31,7 @@ describe("Pact with NotesProvider", () => {
 		await app.listen({ port: 3001 })
 	})
 	afterAll(() => provider.finalize())
+	afterEach(() => provider.verify())
 
 	describe("when a request for paginated notes is made", () => {
 		beforeAll(() => {

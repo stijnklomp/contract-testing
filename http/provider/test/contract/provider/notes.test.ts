@@ -16,7 +16,8 @@ describe("Pact Provider Verification", () => {
 	it("validates the expectations of the consumer", async () => {
 		const opts = {
 			pactUrls: [
-				path.resolve(__dirname, "../pacts/consumer-notesprovider.json"),
+				// path.resolve(__dirname, "../pacts/consumer-notesprovider.json"),
+				path.resolve(process.cwd(), "../pacts"),
 			],
 			provider: "NotesProvider",
 			providerBaseUrl: "http://localhost:3001",
