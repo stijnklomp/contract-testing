@@ -11,7 +11,7 @@ describe("Pact Provider Verification", () => {
 	beforeAll(async () => {
 		app = instance()
 		await app.listen({ port: 3001 })
-	})
+
 
 	it("validates the expectations of the consumer", async () => {
 		const opts = {

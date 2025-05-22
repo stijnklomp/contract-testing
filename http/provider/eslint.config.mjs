@@ -23,6 +23,13 @@ const addedConfigs = [
 			"@typescript-eslint/unbound-method": "off",
 		},
 	},
+	{
+		files: ["test/contract/**/*.ts"],
+		name: "Typescript -> Contract tests",
+		rules: {
+			"jest/expect-expect": ["off"],
+		},
+	},
 ]
 
 finalConfig.push(...addedConfigs)
