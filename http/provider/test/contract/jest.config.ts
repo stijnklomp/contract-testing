@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import type { Config } from "jest"
 
 import { coreConfig } from "../jest.config"
 
 const config: Config = {
 	...coreConfig,
+	automock: false,
 	displayName: "contract",
 	moduleNameMapper: {
 		...coreConfig.moduleNameMapper,

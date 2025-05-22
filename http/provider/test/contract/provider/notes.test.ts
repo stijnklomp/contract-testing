@@ -5,22 +5,26 @@ import { FastifyInstance } from "fastify"
 import { build } from "@/helper"
 import { prisma } from "@/common/prisma"
 import { Note } from "@prisma/client"
-// import { loggerEnvConfig } from "@/src/common/logger"
+import { loggerEnvConfig } from "@/src/common/logger"
 
 const insertTestNotes = async (
 	data: (Pick<Note, "id" | "note"> & { owner: string })[],
-) => prisma.note.createMany({ data })
+) => {
+	const prismaClient = prisma()
+	await prismaClient.note.deleteMany({})
+	await prismaClient.note.createManyAndReturn({ data })
+}
 
 describe("Pact Provider Verification", () => {
 	let app: FastifyInstance
-	const instance: () => FastifyInstance = build()
-	// const instance: () => FastifyInstance = build({
-	// 	logger: loggerEnvConfig.development,
-	// })
+	// const instance: () => FastifyInstance = build()
+	const instance: () => FastifyInstance = build({
+		logger: loggerEnvConfig.development,
+	})
 
 	beforeAll(async () => {
 		app = instance()
-		await app.listen({ port: 3001 })
+		await app.listen({ port: 3002 })
 	})
 
 	it("validates the expectations of the consumer", async () => {
@@ -30,7 +34,7 @@ describe("Pact Provider Verification", () => {
 				path.resolve(process.cwd(), "../pacts"),
 			],
 			provider: "NotesProvider",
-			providerBaseUrl: "http://localhost:3001",
+			providerBaseUrl: "http://localhost:3002",
 			stateHandlers: {
 				"notes exist": async () => {
 					await insertTestNotes([

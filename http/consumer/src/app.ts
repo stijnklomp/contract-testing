@@ -26,7 +26,7 @@ if (loggerEnv !== "test" && useElasticAPM == "true") {
 export const options: FastifyServerOptions = {
 	ajv: {
 		customOptions: {
-			// coerceTypes: true,
+			coerceTypes: true,
 			removeAdditional: "all",
 			useDefaults: true,
 		},

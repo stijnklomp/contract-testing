@@ -16,38 +16,36 @@
           }
         },
         "method": "GET",
-        "path": "/notes",
+        "path": "/v1/notes",
         "query": "page=1&perPage=10"
       },
       "response": {
-        "body": {
-          "notes": [
-            {
-              "content": "Sample note content",
-              "id": 1
-            },
-            {
-              "content": "Sample note content",
-              "id": 1
-            }
-          ]
-        },
+        "body": [
+          {
+            "id": 1,
+            "note": "Sample note content"
+          },
+          {
+            "id": 1,
+            "note": "Sample note content"
+          }
+        ],
         "headers": {
           "Content-Type": "application/json"
         },
         "matchingRules": {
-          "$.body.notes": {
+          "$.body": {
             "match": "type",
             "min": 2
           },
-          "$.body.notes[*].content": {
+          "$.body[*].id": {
             "match": "type"
           },
-          "$.body.notes[*].id": {
+          "$.body[*].note": {
             "match": "type"
           }
         },
-        "status": 200
+        "status": 201
       }
     }
   ],

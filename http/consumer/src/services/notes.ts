@@ -6,7 +6,7 @@ import notesRepository from "@/repositories/notes"
 
 export const getNotes = async () => {
 	const response = await axios.get(
-		`${process.env.NOTES_API_URL}/notes?page=1&perPage=10`,
+		`${process.env.NOTES_API_URL}/v1/notes?page=1&perPage=10`,
 	)
 
 	return response.data

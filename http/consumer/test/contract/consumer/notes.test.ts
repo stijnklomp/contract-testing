@@ -39,23 +39,21 @@ describe("Pact with NotesProvider", () => {
 				state: "notes exist",
 				uponReceiving: "a paginated request for notes",
 				willRespondWith: {
-					body: {
-						notes: eachLike(
-							{
-								content: like("Sample note content"),
-								id: like(1),
-							},
-							{ min: 2 },
-						),
-					},
+					body: eachLike(
+						{
+							note: like("Sample note content"),
+							id: like(1),
+						},
+						{ min: 2 },
+					),
 					headers: {
 						"Content-Type": "application/json",
 					},
-					status: 200,
+					status: 201,
 				},
 				withRequest: {
 					method: "GET",
-					path: "/notes",
+					path: "/v1/notes",
 					query: {
 						page: like("1"),
 						perPage: like("10"),
@@ -69,8 +67,8 @@ describe("Pact with NotesProvider", () => {
 
 			const response = await axios.get("http://localhost:3001/v1/notes")
 			expect(response.status).toBe(200)
-			expect(Array.isArray(response.data.notes)).toBe(true)
-			expect(response.data.notes.length).toBeGreaterThanOrEqual(2)
+			expect(Array.isArray(response.data)).toBe(true)
+			expect(response.data.length).toBeGreaterThanOrEqual(2)
 		})
 	})
 })

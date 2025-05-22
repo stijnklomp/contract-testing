@@ -11,9 +11,7 @@ export const getNotesHandler = async (
 	try {
 		const notes = await notesService.getNotes({ ...req.query })
 
-		await res.code(201).send({
-			notes,
-		})
+		await res.code(201).send(notes)
 	} catch (err) {
 		logger.error(err)
 		await res.code(500).send({
