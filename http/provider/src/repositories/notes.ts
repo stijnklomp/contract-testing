@@ -6,11 +6,16 @@ export const getNotes = async (
 	data: StaticRequestSchemaTypes<
 		typeof notesValidator.getNotes
 	>["querystring"],
-) =>
-	prisma.note.findMany({
+) => {
+	console.log("getNotes")
+	const notes = prisma.note.findMany({
 		skip: data.page - 1,
 		take: data.perPage,
 	})
+	console.log("getNotes notes:", notes)
+
+	return notes
+}
 
 export const createNote = async (
 	data: StaticRequestSchemaTypes<typeof notesValidator.createNote>["body"],
