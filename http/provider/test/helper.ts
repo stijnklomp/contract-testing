@@ -9,11 +9,6 @@ export const build = (overrideOptions: Partial<FastifyServerOptions> = {}) => {
 	let fastifySetup: FastifyInstance
 
 	beforeAll(async () => {
-		console.log("BEFORE ALL B1")
-		// fastifySetup = fastify({
-		// 	...options,
-		// 	...overrideOptions,
-		// })
 		fastifySetup = fastify({
 			...options,
 			...overrideOptions,
@@ -28,7 +23,6 @@ export const build = (overrideOptions: Partial<FastifyServerOptions> = {}) => {
 		await fastifySetup.register(autoLoad, {
 			dir: path.join(__dirname, "../src/routes"),
 		})
-		console.log("routes registered")
 	})
 
 	afterAll(async () => {

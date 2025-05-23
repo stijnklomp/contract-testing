@@ -1,34 +1,35 @@
-import fastifySetup, { FastifyServerOptions, FastifyInstance } from "fastify"
+import fastify, { FastifyServerOptions, FastifyInstance } from "fastify"
+import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox"
 import autoLoad from "@fastify/autoload"
 import path from "path"
 
 import { options } from "@/src/app"
 
 export const build = (overrideOptions: Partial<FastifyServerOptions> = {}) => {
-	let fastify: FastifyInstance
+	let fastifySetup: FastifyInstance
 
 	beforeAll(async () => {
-		fastify = fastifySetup({
+		fastifySetup = fastify({
 			...options,
 			...overrideOptions,
-		})
+		}).withTypeProvider<TypeBoxTypeProvider>()
 
-		// await fastify.register(autoLoad, {
+		// await fastifySetup.register(autoLoad, {
 		// 	dir: path.join(__dirname, "../src/config"),
 		// })
-		await fastify.register(autoLoad, {
+		await fastifySetup.register(autoLoad, {
 			dir: path.join(__dirname, "../src/plugins"),
 		})
-		await fastify.register(autoLoad, {
+		await fastifySetup.register(autoLoad, {
 			dir: path.join(__dirname, "../src/routes"),
 		})
 	})
 
 	afterAll(async () => {
-		await fastify.close()
+		await fastifySetup.close()
 	})
 
-	return () => fastify
+	return () => fastifySetup
 }
 
 /**

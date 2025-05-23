@@ -25,13 +25,6 @@ if (loggerEnv !== "test" && useElasticAPM == "true") {
 }
 
 export const options: FastifyServerOptions = {
-	// ajv: {
-	// 	customOptions: {
-	// 		coerceTypes: true,
-	// 		removeAdditional: "all",
-	// 		useDefaults: true,
-	// 	},
-	// },
 	genReqId: () => {
 		return hyperid({ fixedLength: true, urlSafe: true })()
 	},
