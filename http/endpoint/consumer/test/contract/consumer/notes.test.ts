@@ -9,8 +9,7 @@ import { build } from "@/helper"
 
 const provider = new Pact({
 	consumer: "NotesConsumer",
-	dir: path.resolve(process.cwd(), "../pacts"),
-	// dir: path.resolve(__dirname, "../pacts"),
+	dir: path.resolve(process.cwd(), "../../pacts"),
 	log: path.resolve(process.cwd(), "logs", "pact.log"),
 	logLevel: "warn",
 	port: 1234,
@@ -18,6 +17,7 @@ const provider = new Pact({
 })
 
 describe("Pact with NotesProvider", () => {
+	// Run local server to test against actual endpoint
 	let app: FastifyInstance
 	const instance: () => FastifyInstance = build()
 	// const instance: () => FastifyInstance = build({
@@ -41,8 +41,8 @@ describe("Pact with NotesProvider", () => {
 				willRespondWith: {
 					body: eachLike(
 						{
-							note: like("Sample note content"),
 							id: like(1),
+							note: like("Sample note content"),
 						},
 						{ min: 2 },
 					),
@@ -68,7 +68,9 @@ describe("Pact with NotesProvider", () => {
 			const response = await axios.get("http://localhost:3001/v1/notes")
 			expect(response.status).toBe(200)
 			expect(Array.isArray(response.data)).toBe(true)
-			expect(response.data.length).toBeGreaterThanOrEqual(2)
+			expect((response.data as unknown[]).length).toBeGreaterThanOrEqual(
+				2,
+			)
 		})
 	})
 })
