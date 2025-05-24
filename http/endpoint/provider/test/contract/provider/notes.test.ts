@@ -16,7 +16,7 @@ const insertTestNotes = async (
 }
 
 describe("Pact Provider Verification", () => {
-	// No need to spin up the server as it's already running in Docker Compose
+	// No need to spin up API as it is already running in Docker Compose
 	//
 	// let app: FastifyInstance
 	// const instance: () => FastifyInstance = build()

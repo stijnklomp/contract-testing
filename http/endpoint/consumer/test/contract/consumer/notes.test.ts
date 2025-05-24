@@ -17,7 +17,7 @@ const provider = new Pact({
 })
 
 describe("Pact with NotesProvider", () => {
-	// Run local server to test against actual endpoint
+	// Spin up API to test against actual endpoint
 	let app: FastifyInstance
 	const instance: () => FastifyInstance = build()
 	// const instance: () => FastifyInstance = build({
