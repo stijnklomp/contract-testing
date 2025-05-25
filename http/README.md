@@ -8,7 +8,7 @@ There's two available directories:
 
 [Explore how to test an entire endpoint](./endpoint/README.md)
 
-1.2. Now lets explore the `handler`.
+1.2. Continue with the `handler` method.
 
 [Explore how to test a handler method](./handler/README.md)
 

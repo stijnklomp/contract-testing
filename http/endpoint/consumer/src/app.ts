@@ -6,7 +6,7 @@ import hyperid from "hyperid"
 import elasticAPM from "elastic-apm-node"
 
 import { loggerEnv, loggerConfig } from "@/common/logger"
-import { init as initCache } from "@/infrastructure/cache"
+// import { init as initCache } from "@/infrastructure/cache"
 import { init as initRabbitMQ } from "@/infrastructure/rabbitMQ"
 
 const useElasticAPM = process.env.USE_ELASTIC_APM ?? "true"
@@ -104,7 +104,7 @@ void fastifySetup.register(autoLoad, {
 
 export const start = async () => {
 	try {
-		await initCache()
+		// await initCache()
 		await initRabbitMQ()
 		const port = Number(process.env.API_PORT ?? 3000)
 		await fastifySetup.listen({

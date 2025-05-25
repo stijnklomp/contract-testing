@@ -7,9 +7,10 @@ import { FastifyInstance } from "fastify"
 import { build } from "@/helper"
 // import { loggerEnvConfig } from "@/src/common/logger"
 
+const pactsDir = process.env.PACTS_DIR ?? "../../pacts"
 const provider = new Pact({
 	consumer: "NotesConsumer",
-	dir: path.resolve(process.cwd(), "../../pacts"),
+	dir: path.resolve(process.cwd(), pactsDir),
 	log: path.resolve(process.cwd(), "logs", "pact.log"),
 	logLevel: "warn",
 	port: 1234,
@@ -17,7 +18,11 @@ const provider = new Pact({
 })
 
 describe("Pact with NotesProvider", () => {
+	const basePort = "3001"
+	// const basePort = "3000"
+
 	// Spin up API to test against actual endpoint
+	// Note that this is not strictly necessary when running with Docker Compose but it does still work
 	let app: FastifyInstance
 	const instance: () => FastifyInstance = build()
 	// const instance: () => FastifyInstance = build({
@@ -63,9 +68,11 @@ describe("Pact with NotesProvider", () => {
 		})
 
 		it("should receive the correct note list via Fastify service", async () => {
-			process.env.NOTES_API_URL = `http://localhost:${provider.opts.port}`
+			process.env.NOTES_API_URL = `http://localhost:${String(provider.opts.port)}`
 
-			const response = await axios.get("http://localhost:3001/v1/notes")
+			const response = await axios.get(
+				`http://localhost:${basePort}/v1/notes`,
+			)
 			expect(response.status).toBe(200)
 			expect(Array.isArray(response.data)).toBe(true)
 			expect((response.data as unknown[]).length).toBeGreaterThanOrEqual(

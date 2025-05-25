@@ -16,7 +16,10 @@ const insertTestNotes = async (
 }
 
 describe("Pact Provider Verification", () => {
-	// No need to spin up API as it is already running in Docker Compose
+	// const basePort = "3001"
+	const basePort = "3000"
+
+	// No need to spin up API as it is required to run in Docker Compose due to needing to access the database
 	//
 	// let app: FastifyInstance
 	// const instance: () => FastifyInstance = build()
@@ -26,14 +29,15 @@ describe("Pact Provider Verification", () => {
 
 	// beforeAll(async () => {
 	// 	app = instance()
-	// 	await app.listen({ port: 3002 })
+	// 	await app.listen({ port: basePort })
 	// })
 
 	it("validates the expectations of the consumer", async () => {
+		const pactsDir = process.env.PACTS_DIR ?? "../../pacts"
 		const opts = {
-			pactUrls: [path.resolve(process.cwd(), "../../pacts")],
+			pactUrls: [path.resolve(process.cwd(), pactsDir)],
 			provider: "NotesProvider",
-			providerBaseUrl: "http://localhost:3000",
+			providerBaseUrl: `http://localhost:${basePort}`,
 			stateHandlers: {
 				"notes exist": async () => {
 					await insertTestNotes([

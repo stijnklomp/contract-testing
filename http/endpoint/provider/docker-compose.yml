@@ -1,25 +1,25 @@
-x-playwright: &playwright
-  image: mcr.microsoft.com/playwright:v1.49.1-jammy
-  volumes:
-    - ".:/src"
-  working_dir: "/src"
-  tty: true
-  depends_on:
-    rabbitmq:
-      condition: service_healthy
-    cache:
-      condition: service_started
-    db-migration:
-      condition: service_completed_successfully
-    localstack:
-      condition: service_started
-  # networks:
-  #   - internal
-  #   - external
-  env_file:
-    - path: ./.env
-  ports:
-    - 3001:3001
+# x-playwright: &playwright
+#   image: mcr.microsoft.com/playwright:v1.49.1-jammy
+#   volumes:
+#     - ".:/src"
+#   working_dir: "/src"
+#   tty: true
+#   depends_on:
+#     rabbitmq:
+#       condition: service_healthy
+#     cache:
+#       condition: service_started
+#     db-migration:
+#       condition: service_completed_successfully
+#     localstack:
+#       condition: service_started
+#   # networks:
+#   #   - internal
+#   #   - external
+#   env_file:
+#     - path: ./.env
+#   ports:
+#     - 3001:3001
 
 x-fastify: &fastify # network_mode: "host"
   tty: true
@@ -31,12 +31,12 @@ x-fastify: &fastify # network_mode: "host"
   depends_on:
     rabbitmq:
       condition: service_healthy
-    cache:
-      condition: service_started
+    # cache:
+    #   condition: service_started
     db-migration:
       condition: service_completed_successfully
-    localstack:
-      condition: service_started
+    # localstack:
+    #   condition: service_started
     # otel-collector:
     #   condition: service_healthy
   # networks:
@@ -68,26 +68,28 @@ services:
     image: node:23-alpine
     volumes:
       - ".:/src"
+      - "${PWD}/../pacts:/pacts"
     working_dir: "/src"
     command: sh -c "[ ! -d node_modules ] && npm ci --force ; npm run dev"
     environment:
-      - CACHE_HOST=cache
-      - RABBIT_HOST=rabbitmq
+      # CACHE_HOST: cache
+      RABBIT_HOST: rabbitmq
+      PACTS_DIR: ../pacts
     profiles:
       - dev
 
-  acceptance:
-    <<: *playwright
-    command: sh -c "[ ! -d node_modules ] && npm ci --force ; sleep infinity"
-    profiles:
-      - local
-      - dev
+  # acceptance:
+  #   <<: *playwright
+  #   command: sh -c "[ ! -d node_modules ] && npm ci --force ; sleep infinity"
+  #   profiles:
+  #     - local
+  #     - dev
 
-  acceptance-once:
-    <<: *playwright
-    command: sh -c "[ ! -d node_modules ] && npm ci --force ; npm run test:acceptance"
-    profiles:
-      - test
+  # acceptance-once:
+  #   <<: *playwright
+  #   command: sh -c "[ ! -d node_modules ] && npm ci --force ; npm run test:acceptance"
+  #   profiles:
+  #     - test
 
   rabbitmq:
     image: rabbitmq
@@ -106,18 +108,18 @@ services:
       - ${RABBIT_PORT:-5672}:5672
       - 15672:15672
 
-  cache:
-    image: valkey/valkey
-    restart: always
-    command: >
-      valkey-server --save "" --appendonly no
-      --notify-keyspace-events Ex
-      --loglevel notice
-      --requirepass ${CACHE_PASSWORD}
-    volumes:
-      - cache:/data
-    ports:
-      - ${CACHE_PORT:-6379}:6379
+  # cache:
+  #   image: valkey/valkey
+  #   restart: always
+  #   command: >
+  #     valkey-server --save "" --appendonly no
+  #     --notify-keyspace-events Ex
+  #     --loglevel notice
+  #     --requirepass ${CACHE_PASSWORD}
+  #   volumes:
+  #     - cache:/data
+  #   ports:
+  #     - ${CACHE_PORT:-6379}:6379
 
   db:
     image: postgres
@@ -149,7 +151,7 @@ services:
       - ${DATABASE_PORT:-5432}:5432
 
   db-migration:
-    image: node:20-alpine
+    image: node:23-alpine
     volumes:
       - ".:/src"
     working_dir: "/src"
@@ -169,21 +171,21 @@ services:
       - dev
       - test
 
-  localstack:
-    image: localstack/localstack
-    ports:
-      - "127.0.0.1:4566:4566" # LocalStack Gateway
-      - "127.0.0.1:4510-4559:4510-4559" # external services port range
-    environment:
-      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
-      - DEBUG=${DEBUG:-0}
-    volumes:
-      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    profiles:
-      - local
-      - dev
-      - test
+  # localstack:
+  #   image: localstack/localstack
+  #   ports:
+  #     - "127.0.0.1:4566:4566" # LocalStack Gateway
+  #     - "127.0.0.1:4510-4559:4510-4559" # external services port range
+  #   environment:
+  #     # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
+  #     - DEBUG=${DEBUG:-0}
+  #   volumes:
+  #     - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+  #     - "/var/run/docker.sock:/var/run/docker.sock"
+  #   profiles:
+  #     - local
+  #     - dev
+  #     - test
 
   # otel-collector:
   #   image: otel/opentelemetry-collector-contrib
@@ -203,11 +205,11 @@ services:
 
 volumes:
   rabbitmq:
-  cache:
+  # cache:
   postgres-data:
 
 networks:
-  cache:
+  # cache:
   elastic:
     #external: true
 #   internal:
