@@ -1,4 +1,4 @@
-import { FastifyReply } from "fastify"
+import { FastifyRequest, FastifyReply } from "fastify"
 
 import notesValidator from "@/models/validators/notes"
 import { logger } from "@/common/logger"
@@ -6,11 +6,11 @@ import notesService from "@/services/notes"
 import { FastifyRequestSchemaTypes } from "@/models/types/schemaBuilderTypeExtractor"
 
 export const getNotesHandler = async (
-	req: FastifyRequestSchemaTypes<typeof notesValidator.getNotes>,
+	req: FastifyRequest,
 	res: FastifyReply,
 ) => {
 	try {
-		const notes = await notesService.getNotes({ ...req.query })
+		const notes = await notesService.getNotes()
 
 		await res.code(200).send(notes)
 	} catch (err) {

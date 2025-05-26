@@ -1,0 +1,10 @@
+*
+!.env
+!prisma
+!rabbitmq
+!src
+!esbuild.mjs
+!package.json
+!package-lock.json
+!tsconfig.json
+!tsconfig.production.json
