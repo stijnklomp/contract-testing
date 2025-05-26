@@ -1,83 +1,118 @@
 import path from "path"
-import { Pact } from "@pact-foundation/pact"
-import { like, eachLike } from "@pact-foundation/pact/src/dsl/matchers"
-import axios from "axios"
-import { FastifyInstance } from "fastify"
+import { MessageConsumerPact, Matchers } from "@pact-foundation/pact"
+import notesService from "@/services/notes"
+import { listenForNotesHandler } from "@/controllers/notes"
 
-import { build } from "@/helper"
-// import { loggerEnvConfig } from "@/src/common/logger"
+jest.mock("@/services/notes")
 
-const pactsDir = process.env.PACTS_DIR ?? "../../pacts"
-const provider = new Pact({
-	consumer: "NotesConsumer",
-	dir: path.resolve(process.cwd(), pactsDir),
-	log: path.resolve(process.cwd(), "logs", "pact.log"),
-	logLevel: "warn",
-	port: 1234,
-	provider: "NotesProvider",
-})
+const { like } = Matchers
+const pactsDir = process.env.PACTS_DIR ?? "../pacts"
 
-describe("Pact with NotesProvider", () => {
-	const basePort = "3001"
-	// const basePort = "3000"
-
-	// Spin up API to test against actual endpoint
-	// Note that this is not strictly necessary when running with Docker Compose but it does still work
-	let app: FastifyInstance
-	const instance: () => FastifyInstance = build()
-	// const instance: () => FastifyInstance = build({
-	// 	logger: loggerEnvConfig.development,
-	// })
-
-	beforeAll(async () => {
-		await provider.setup()
-
-		app = instance()
-		await app.listen({ port: 3001 })
+describe("Pact Message Consumer Test - listenForNotesHandler", () => {
+	const messagePact = new MessageConsumerPact({
+		consumer: "NotesConsumer",
+		dir: path.resolve(process.cwd(), pactsDir),
+		log: path.resolve(process.cwd(), "logs", "pact.log"),
+		logLevel: "warn",
+		provider: "NotesProvider",
 	})
-	afterAll(() => provider.finalize())
-	afterEach(() => provider.verify())
 
-	describe("when a request for paginated notes is made", () => {
-		beforeAll(() => {
-			return provider.addInteraction({
-				state: "notes exist",
-				uponReceiving: "a paginated request for notes",
-				willRespondWith: {
-					body: eachLike(
-						{
-							id: like(1),
-							note: like("Sample note content"),
-						},
-						{ min: 2 },
-					),
-					headers: {
-						"Content-Type": "application/json",
-					},
-					status: 201,
-				},
-				withRequest: {
-					method: "GET",
-					path: "/v1/notes",
-					query: {
-						page: like("1"),
-						perPage: like("10"),
-					},
-				},
+	it("should handle a note message", async () => {
+		await messagePact
+			.given("a note exists")
+			.expectsToReceive("a new note message")
+			.withContent({
+				id: like(1),
+				note: like("Sample note content"),
 			})
-		})
+			.withMetadata({
+				"content-type": "application/json",
+			})
+			.verify(async (message) => {
+				const fakeMsg = {
+					content: Buffer.from(JSON.stringify(message.contents)),
+				}
+				const fakeChannel = {
+					ack: jest.fn(),
+				}
 
-		it("should receive the correct note list via Fastify service", async () => {
-			process.env.NOTES_API_URL = `http://localhost:${String(provider.opts.port)}`
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+				notesService.listenForNotes.mockImplementation(async (cb) => {
+					cb(fakeMsg, fakeChannel)
+				})
 
-			const response = await axios.get(
-				`http://localhost:${basePort}/v1/notes`,
-			)
-			expect(response.status).toBe(200)
-			expect(Array.isArray(response.data)).toBe(true)
-			expect((response.data as unknown[]).length).toBeGreaterThanOrEqual(
-				2,
-			)
-		})
+				await listenForNotesHandler()
+
+				expect(fakeChannel.ack).toHaveBeenCalledWith(fakeMsg)
+			})
 	})
 })
+
+//
+//
+//
+//
+//
+// import path from "path"
+// import { Pact, MessageConsumerPact } from "@pact-foundation/pact"
+// import { like } from "@pact-foundation/pact/src/dsl/matchers"
+// import { FastifyInstance } from "fastify"
+
+// import { build } from "@/helper"
+// // import { loggerEnvConfig } from "@/src/common/logger"
+
+// const pactsDir = process.env.PACTS_DIR ?? "../../pacts"
+// const provider = new Pact({
+// 	consumer: "NotesConsumer",
+// 	dir: path.resolve(process.cwd(), pactsDir),
+// 	log: path.resolve(process.cwd(), "logs", "pact.log"),
+// 	logLevel: "warn",
+// 	port: 1234,
+// 	provider: "NotesProvider",
+// })
+
+// describe("Pact with NotesProvider", () => {
+// 	const basePort = "3001"
+// 	// const basePort = "3000"
+
+// 	// Spin up API to test against actual endpoint
+// 	// Note that this is not strictly necessary when running with Docker Compose but it does still work
+// 	let app: FastifyInstance
+// 	const instance: () => FastifyInstance = build()
+// 	// const instance: () => FastifyInstance = build({
+// 	// 	logger: loggerEnvConfig.development,
+// 	// })
+
+// 	beforeAll(async () => {
+// 		await provider.setup()
+
+// 		app = instance()
+// 		await app.listen({ port: 3001 })
+// 	})
+// 	afterAll(() => provider.finalize())
+// 	afterEach(() => provider.verify())
+
+// 	const messagePact = new MessageConsumerPact({
+// 		consumer: "NotesConsumer",
+// 		dir: path.resolve(process.cwd(), pactsDir),
+// 		logLevel: "warn",
+// 		provider: "NotesProvider",
+// 	})
+
+// 	it("should process a valid note message", async () => {
+// 		await messagePact
+// 			.given("a note exists")
+// 			.expectsToReceive("a new note message")
+// 			.withContent({
+// 				id: like(1),
+// 				note: like("Sample note content"),
+// 			})
+// 			.withMetadata({
+// 				"content-type": "application/json",
+// 			})
+// 			.verify(async (message) => {
+// 				// Simulate consuming the message
+// 				await handleNoteMessage(message.contents)
+// 			})
+// 	})
+// })

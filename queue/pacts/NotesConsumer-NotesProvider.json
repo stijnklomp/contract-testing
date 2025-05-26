@@ -1,0 +1,59 @@
+{
+  "consumer": {
+    "name": "NotesConsumer"
+  },
+  "messages": [
+    {
+      "contents": {
+        "id": 1,
+        "note": "Sample note content"
+      },
+      "description": "a new note message",
+      "matchingRules": {
+        "body": {
+          "$.id": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          },
+          "$.note": {
+            "combine": "AND",
+            "matchers": [
+              {
+                "match": "type"
+              }
+            ]
+          }
+        },
+        "metadata": {}
+      },
+      "metadata": {
+        "content-type": "application/json",
+        "contentType": "application/json"
+      },
+      "providerStates": [
+        {
+          "name": "a note exists"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "15.0.1"
+    },
+    "pactRust": {
+      "ffi": "0.4.22",
+      "models": "1.2.3"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "NotesProvider"
+  }
+}

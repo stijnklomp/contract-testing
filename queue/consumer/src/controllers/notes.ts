@@ -1,10 +1,8 @@
-import { FastifyInstance } from "fastify"
-
 import { logger } from "@/common/logger"
 import notesService from "@/services/notes"
 import { ConsumeCallback } from "@/infrastructure/rabbitMQ"
 
-export const listenForNotesHandler = async (_fastify: FastifyInstance) => {
+export const listenForNotesHandler = async () => {
 	try {
 		const callback: ConsumeCallback = (msg, channel) => {
 			if (msg !== null) {
