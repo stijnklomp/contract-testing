@@ -35,6 +35,8 @@ It also decouples the consumers from the providers and allows for many consumers
 
 ## Getting started
 
+*Any commands found in a readme should be run in the same directory as that readme.*
+
 There's two methods of contract testing with Pact. Either the `http` or `queue` method. Which one you use depends on how your consumer speaks with the provider.
 
 1. Let's start with the `http` method. This is the simpler method as it just involves the direct calls between the consumer and provider.
