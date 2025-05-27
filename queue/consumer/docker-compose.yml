@@ -35,13 +35,12 @@ services:
     image: node:23-alpine
     volumes:
       - ".:/src"
-      - "${PWD}/pacts:/pacts"
+      - "../pacts:/pacts"
     working_dir: "/src"
     command: sh -c "[ ! -d node_modules ] && npm ci --force ; npm run dev"
     environment:
       # CACHE_HOST: cache
       RABBIT_HOST: rabbitmq
-      PACTS_DIR: ../pacts
     profiles:
       - dev
 

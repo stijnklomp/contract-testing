@@ -7,11 +7,11 @@ import { FastifyInstance } from "fastify"
 import { build } from "@/helper"
 // import { loggerEnvConfig } from "@/src/common/logger"
 
-const pactsDir = process.env.PACTS_DIR ?? "../../pacts"
+const pactsDir = process.env.PACTS_DIR ?? "../../../../../pacts"
 const provider = new Pact({
 	consumer: "NotesConsumer",
-	dir: path.resolve(process.cwd(), pactsDir),
-	log: path.resolve(process.cwd(), "logs", "pact.log"),
+	dir: path.resolve(__dirname, pactsDir),
+	log: path.resolve(__dirname, "../logs", "pact.log"),
 	logLevel: "warn",
 	port: 1234,
 	provider: "NotesProvider",

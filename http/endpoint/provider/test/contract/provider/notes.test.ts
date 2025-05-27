@@ -15,10 +15,34 @@ const insertTestNotes = async (
 	await prismaClient.note.createManyAndReturn({ data })
 }
 
-describe("Pact Provider Verification", () => {
-	// const basePort = "3001"
-	const basePort = "3000"
+// const basePort = "3001"
+const basePort = "3000"
+const pactsDir = process.env.PACTS_DIR ?? "../../../../../pacts"
+const opts = {
+	pactUrls: [path.resolve(__dirname, pactsDir)],
+	provider: "NotesProvider",
+	providerBaseUrl: `http://localhost:${basePort}`,
+	stateHandlers: {
+		"notes exist": async () => {
+			await insertTestNotes([
+				{
+					id: 1,
+					note: "Sample note content",
+					owner: "test-owner",
+				},
+				{
+					id: 2,
+					note: "Sample note content",
+					owner: "test-owner",
+				},
+			])
 
+			return { result: "Notes inserted" }
+		},
+	},
+}
+
+describe("Pact Provider Verification", () => {
 	// No need to spin up API as it is required to run in Docker Compose due to needing to access the database
 	//
 	// let app: FastifyInstance
@@ -33,31 +57,6 @@ describe("Pact Provider Verification", () => {
 	// })
 
 	it("validates the expectations of the consumer", async () => {
-		const pactsDir = process.env.PACTS_DIR ?? "../../pacts"
-		const opts = {
-			pactUrls: [path.resolve(process.cwd(), pactsDir)],
-			provider: "NotesProvider",
-			providerBaseUrl: `http://localhost:${basePort}`,
-			stateHandlers: {
-				"notes exist": async () => {
-					await insertTestNotes([
-						{
-							id: 1,
-							note: "Sample note content",
-							owner: "test-owner",
-						},
-						{
-							id: 2,
-							note: "Sample note content",
-							owner: "test-owner",
-						},
-					])
-
-					return { result: "Notes inserted" }
-				},
-			},
-		}
-
 		await new Verifier(opts).verifyProvider()
 	})
 })

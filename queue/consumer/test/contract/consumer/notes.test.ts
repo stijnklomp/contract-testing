@@ -6,17 +6,16 @@ import { listenForNotesHandler } from "@/controllers/notes"
 jest.mock("@/services/notes")
 
 const { like } = Matchers
-const pactsDir = process.env.PACTS_DIR ?? "../pacts"
+const pactsDir = process.env.PACTS_DIR ?? "../../../../../pacts"
+const messagePact = new MessageConsumerPact({
+	consumer: "NotesConsumer",
+	dir: path.resolve(__dirname, pactsDir),
+	log: path.resolve(__dirname, "../logs", "pact.log"),
+	logLevel: "warn",
+	provider: "NotesProvider",
+})
 
 describe("Pact Message Consumer Test - listenForNotesHandler", () => {
-	const messagePact = new MessageConsumerPact({
-		consumer: "NotesConsumer",
-		dir: path.resolve(process.cwd(), pactsDir),
-		log: path.resolve(process.cwd(), "logs", "pact.log"),
-		logLevel: "warn",
-		provider: "NotesProvider",
-	})
-
 	it("should handle a note message", async () => {
 		await messagePact
 			.given("a note exists")
