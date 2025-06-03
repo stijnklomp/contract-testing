@@ -10,9 +10,13 @@ import { Note } from "@prisma/client"
 const insertTestNotes = async (
 	data: (Pick<Note, "id" | "note"> & { owner: string })[],
 ) => {
-	const prismaClient = prisma()
-	await prismaClient.note.deleteMany({})
-	await prismaClient.note.createManyAndReturn({ data })
+	try {
+		const prismaClient = prisma()
+		await prismaClient.note.deleteMany({})
+		await prismaClient.note.createManyAndReturn({ data })
+	} catch (error) {
+		console.log(error)
+	}
 }
 
 // const basePort = "3001"

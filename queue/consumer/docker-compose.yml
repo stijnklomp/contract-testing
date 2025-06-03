@@ -16,6 +16,10 @@ x-fastify: &fastify # network_mode: "host"
   networks:
     - default
     - elastic
+  environment:
+    # CACHE_HOST: cache
+    RABBIT_HOST: rabbitmq
+    DATABASE_URI: "postgresql://dev:admin123@db:5432/fastify?schema=template"
   env_file:
     - path: ./.env
   ports:
