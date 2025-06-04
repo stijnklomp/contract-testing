@@ -46,3 +46,6 @@ There's two methods of contract testing with Pact. Either the `http` or `queue` 
 2. Now we can look at the `queue` method. This tests consumers and providers that are decoupled and communicate through a messaging and streaming broker.
 
 [Explore how to use Pact using the queue method](./queue/README.md)
+
+3. Pact has a broker that can be used to save and share contracts. So rather than sharing and storing raw json contracts, you upload contracts to the broker and you can automatically run tests from relying services.
+It also allows you to tell if a target contract version can or cannot be deployed. Read more about [versioning with the Pact broker](https://docs.pact.io/getting_started/versioning_in_the_pact_broker).

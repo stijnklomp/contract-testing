@@ -7,13 +7,11 @@ export const getNotes = async (
 		typeof notesValidator.getNotes
 	>["querystring"],
 ) => {
-	console.log("getNotes")
 	const notes = await prisma().note.findMany()
 	// const notes = await prisma.note.findMany({
 	// 	skip: data.page - 1,
 	// 	take: data.perPage,
 	// })
-	console.log("getNotes notes:", notes)
 
 	return notes
 }

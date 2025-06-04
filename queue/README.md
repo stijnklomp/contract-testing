@@ -1,17 +1,21 @@
 # Queue
 
-## Instructions
+- The tests can be found in `<consumer/provider>/test/contract/<consumer/provider>/notes.test.ts`
+- The contract(s) can be found at `pacts/`
+
+## Instructions to run the tests
 
 ### Consumer
 
 ```sh
-sudo chmod +x run.sh && ./run.sh consumer
-```
+sudo chmod +x run.sh # May not be necessary
+./run.sh consumer # `provider` for provider
 
-### Provider
+# Run the following inside the running container:
+npm run contract
 
-```sh
-sudo chmod +x run.sh && ./run.sh provider
+# Once you are done, run the following:
+exit
 ```
 
 ## Completed
