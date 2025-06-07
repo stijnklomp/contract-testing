@@ -28,6 +28,8 @@ The example projects are using a [Fastify template](https://github.com/stijnklom
 
 There are lots of tools used for the template. Like linting with [ESLint](https://eslint.org/), formatting with [Prettier](https://prettier.io/) and other development related tools. These are however not required for contract testing and are only included as they are already present in the template that was used. The README's will guide you to the right location for the contract testing related code.
 
+I've created a `contract` directory in the `test` directory of each example. Normally you'd most likely put the contract tests in with your unit and/or acceptance tests.
+
 #### Reasoning for wanting consumer-driver contract testing
 
 When the consumers of an API dictate what the minimum requirements are, the API will ensure that the business requirements of both the consumer and the provider (itself) are met. This ensures confidently that all requirements are met and avoids having to do work that isn't actually needed for any consumer.
