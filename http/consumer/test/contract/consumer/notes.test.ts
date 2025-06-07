@@ -52,7 +52,7 @@ describe("Pact with NotesProvider", () => {
 						{ min: 2 },
 					),
 					headers: {
-						"Content-Type": "application/json",
+						contentType: "application/json",
 					},
 					status: 201,
 				},

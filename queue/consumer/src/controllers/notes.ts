@@ -7,12 +7,12 @@ export const listenForNotesHandler = async () => {
 		const callback: ConsumeCallback = (msg, channel) => {
 			if (msg !== null) {
 				channel.ack(msg)
-				console.log(
+				logger.info(
 					"callback for notes called:",
 					msg.content.toString("utf8"),
 				)
 			} else {
-				console.log("'null' message in callback for notes:", msg)
+				logger.error("'null' message in callback for notes:", msg)
 			}
 		}
 

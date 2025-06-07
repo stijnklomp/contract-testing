@@ -1,4 +1,4 @@
-# Http (endpoint)
+# Http
 
 - The tests can be found in `<consumer/provider>/test/contract/<consumer/provider>/notes.test.ts`
 - The endpoint code can be found in `<consumer/provider>/src/routes/v1/notes.ts`
